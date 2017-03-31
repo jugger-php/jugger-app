@@ -1,25 +1,29 @@
+https://habrahabr.ru/post/215605/
+
 Структура:
 
-	/index.php - точка входа
-	/modules
-		/shop [moduleName]
-			/models
-			/repo
-			/widgets
-	/api
-		/shop
-			/basket [modelName]
-			/product
-				/controller.php (список действий)
-				/access.php (список правил доступа)
-				/action.php (отдельное действие)
-	/pages
-		/catalog [произвольное имя]
-			/sub-dir
-				/section (страница)
-				/index
-					/presenter.php (контроллер страницы, подготовка данных)
-					/view.php (страница)
+```
+/index.php - точка входа
+/modules
+	/shop [moduleName]
+		/models
+		/repo
+		/widgets
+/api
+	/shop
+		/basket [modelName]
+		/product
+			/controller.php (список действий)
+			/access.php (список правил доступа)
+			/action.php (отдельное действие)
+/pages
+	/catalog [произвольное имя]
+		/sub-dir
+			/section (страница)
+			/index
+				/presenter.php (контроллер страницы, подготовка данных)
+				/view.php (страница)
+```
 
 ---
 
@@ -81,16 +85,23 @@ class CatalogPresenter extends Presenter
 		// подготовка данных
 		// выстановка счетчиков и т.д.
 	}
+
+	function getProductList()
+	{
+
+	}
 }
 ```
 
-Presenter.js:
+View.php:
 
-```js
-var Presenter = {
-	onLoad: function() {
+```php
+<?php
 
-	},
+$products = $presenter->getProductList();
 
-};
+?>
+
+<!-- HTML код -->
+
 ```
