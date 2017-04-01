@@ -74,10 +74,10 @@ class ProductController extends Controller
 }
 ```
 
-Presenter.php:
+PageController.php:
 
 ```php
-class CatalogPresenter extends Presenter
+class CatalogPage extends PageController
 {
 	function before()
 	{
@@ -98,7 +98,7 @@ View.php:
 ```php
 <?php
 
-$products = $presenter->getProductList();
+$products = $page->getProductList();
 
 ?>
 
