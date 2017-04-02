@@ -51,7 +51,7 @@ $router = (new ConfigRouterBuilder($path))->build();
 //
 
 $route = $router->findRoute($request->getUrl());
-$route->namespace = "";
+$route->name = "";
 $route->params = [];
 
 if (!$route) {
@@ -61,6 +61,15 @@ if (!$route) {
 //
 // 4. action
 //
+
+if (preg_match('/^([a-z0-9\-\_\/]+)\/([a-z0-9\-\_]+)$/i', $route->name, $m)) {
+	// replace `/` to `\`
+	// and
+	// replace `-` to `camelCase`
+	$class = $m[0] . $m[1];
+}
+
+// or
 
 $action = $route->getClassName();
 if (!class_exists($action)) {
