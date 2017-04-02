@@ -4,12 +4,15 @@
 // 1. entry
 //
 
-// $request = new Request();
-// $request->get = $_GET;
-// $request->post = $_POST;
-// $request->session = $_SESSION;
-// $request->cookie = $_COOKIE;
-// $request->userAgent = $_SERVER;
+$request = new Request();
+$request->get = $_GET;
+$request->post = $_POST;
+$request->session = $_SESSION;
+$request->cookie = $_COOKIE;
+$request->userAgent = $_SERVER;
+
+// or
+
 $request = (new GlobalsRequestBuilder)->build();
 
 // 
@@ -17,7 +20,6 @@ $request = (new GlobalsRequestBuilder)->build();
 // 
 
 $router = new Router();
-$router->routes = include(__DIR__.'/config/routes.php');
 $router->routes = [
 	// ROUTEs каталога
 	'catalog/' => 'pages/catalog/index',
@@ -38,6 +40,16 @@ $router->routes = [
 	'{route:.+}' => 'pages/{route:.+}',
 ];
 
+// or
+
+$path = __DIR__.'/config/routes.php';
+$router = (new ConfigRouterBuilder($path))->build();
+// $router->routes = include($path);
+
+//
+// 3. route
+//
+
 $route = $router->findRoute($request->getUrl());
 $route->namespace = "";
 $route->params = [];
@@ -47,8 +59,20 @@ if (!$route) {
 }
 
 //
-// 3. api
+// 4. action
 //
+
+$action = $route->getClassName();
+if (!class_exists($action)) {
+	throw new HttpException(404);
+}
+
+$action = new $action();
+if (false == ($action instanceof Action)) {
+	throw new HttpException(500);
+}
+
+// or
 
 $action = (new RouteActionBuilder($route))->build();
 $action->params = [];
@@ -58,35 +82,26 @@ if (!$action) {
 }
 
 //
-// 4. access
-// ПРОБЛЕМЫ С СПИСКОМ ПРАВИЛ ДОСТУПА ЕСЛИ НЕ КОНТРОЛЛЕРА
+// 5. token
 //
 
-$user = (new CookieUserBuilder($request->cookie))->build();
-$token = (new CookieTokenBuilder($request->cookie))->build();
-$access = (new AccessBuilder($action))->build();
-$access->whiteList = require($controller->getAccessRules()); 
-//
-// каждый контроллер содердит список правил,
-// которые пользователь МОЖЕТ производить,
-// если какой-то ACTION не указан, значит его нельзя выполнять
-// 
-// $access->whiteList = [
-// 	new ActionRule('/shop/basket/add'),
-// 	new CallbackRule(function(){
-// 		return false;
-// 	})
-// ];
+$token = $request->get('access_token') ?? $request->cookie['access_token'];
+$token = (new TokenBuilder($token))->build();
 
 //
-// 5. response
+// 6. access manager
 //
 
-if ($access->checkUser($user) || $access->checkToken($token)) {
-	$response = $action->run();
-	$response->send();
-	exit($response->code);
-}
-else {
+$accessManager = (new TokenAccessBuilder($token))->build();
+
+if (!$accessManager->checkByAction($action)) {
 	throw new HttpException(403);
 }
+
+//
+// 7. response
+//
+
+$response = $action->run();
+$response->send();
+exit($response->code);
