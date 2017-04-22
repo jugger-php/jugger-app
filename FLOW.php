@@ -3,17 +3,11 @@
 //
 // 1. entry
 //
-
-$request = new Request();
-$request->get = $_GET;
-$request->post = $_POST;
-$request->session = $_SESSION;
-$request->cookie = $_COOKIE;
-$request->userAgent = $_SERVER;
-
-// or
-
-$request = (new GlobalsRequestBuilder)->build();
+$request = (new GlobalsRequestBuilder)->build(); // class Request
+$request->getPost();
+$request->getQuery()['attribute'];
+$request->getSession(); // class Session
+$request->getCookies(); // class CookieCollection
 
 // 
 // 2. route
@@ -21,30 +15,16 @@ $request = (new GlobalsRequestBuilder)->build();
 
 $router = new Router();
 $router->routes = [
-	// ROUTEs каталога
-	'catalog/' => 'pages/catalog/index',
-	'catalog/{sectionCode}' => 'pages/catalog/section',
-	// строятся по принципу:
-	// 	$controller = new \pages\catalog\index\Controller();
-	// 	$controller->params = [
-	// 		'sectionCode' => '...',
-	// 		'elemnentCode' => '...',
-	// 	];
-	'catalog/{sectionCode}/{elemnentCode}' => 'pages/catalog/element',
-	// все запросы начинающиеся с API никак не ретранслируются
-	'api/{route:.+}' => 'api/{route:.+}',
-	// все запросы уходят на PAGES 
-	// 	$route = '/user/profile/view';
-	// 	$controller = new \pages\user\profile\view\Controller();
-	// 	$validRegexp = ([a-z0-9\/]+)
-	'{route:.+}' => 'pages/{route:.+}',
+	'catalog/' => 'catalog/index',
+	'catalog/{sectionCode}' => 'catalog/section',
+	'catalog/{sectionCode}/{elemnentId:\d+}' => 'catalog/element',
 ];
+
 
 // or
 
 $path = __DIR__.'/config/routes.php';
 $router = (new ConfigRouterBuilder($path))->build();
-// $router->routes = include($path);
 
 //
 // 3. route
@@ -62,21 +42,12 @@ if (!$route) {
 // 4. action
 //
 
-if (preg_match('/^([a-z0-9\-\_\/]+)\/([a-z0-9\-\_]+)$/i', $route->name, $m)) {
-	// replace `/` to `\`
-	// and
-	// replace `-` to `camelCase`
-	$class = $m[0] . $m[1];
-}
-
-// or
-
-$action = $route->getClassName();
-if (!class_exists($action)) {
+$actionClass = Action::getClassNameByRoute($route);
+if (!class_exists($actionClass)) {
 	throw new HttpException(404);
 }
 
-$action = new $action();
+$action = new $actionClass();
 if (false == ($action instanceof Action)) {
 	throw new HttpException(500);
 }
@@ -94,14 +65,20 @@ if (!$action) {
 // 5. token
 //
 
-$token = $request->get('access_token') ?? $request->cookie['access_token'];
-$token = (new TokenBuilder($token))->build();
+$tokenValue = $request->getQuery('access_token') ?? $request->getCookies()->getValue('access_token');
+$token = new AccessToken($tokenValue);
+$token->getUser();
+$token->getRules();
+
+// or
+
+$token = (new RequestTokenBuilder($request))->build();
 
 //
 // 6. access manager
 //
 
-$accessManager = (new TokenAccessBuilder($token))->build();
+$accessManager = (new TokenAccessManagerBuilder($token))->build();
 
 if (!$accessManager->checkByAction($action)) {
 	throw new HttpException(403);
