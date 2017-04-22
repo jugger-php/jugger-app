@@ -78,7 +78,7 @@ $token = (new RequestTokenBuilder($request))->build();
 // 6. access manager
 //
 
-$accessManager = (new TokenAccessManagerBuilder($token))->build();
+$accessManager = new AccessManager($token);
 
 if (!$accessManager->checkByAction($action)) {
 	throw new HttpException(403);
