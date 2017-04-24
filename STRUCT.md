@@ -1,5 +1,41 @@
 https://habrahabr.ru/post/215605/
 
+```
+Структура:
+- index.php
+- config/
+	- di - внедрение зависимостей
+	- url - маршрутизатор
+	- app - настройки приложения
+
+- modules/
+	- moduleName/
+		- install - параметры установки (подготовленные страницы и сервисы)
+		- model - модели
+		- repo - репозитории
+		- factory - фабрики
+		- widget - виджеты
+		- helper - вспомогательные классы
+
+	- moduleNameAddon/ - кастомные дополнения к модулю
+	 	- ...
+
+- api/
+	- dir/
+		- anotherDir/
+			- actionName/
+				- Action.php
+				- view1.php
+				- view2.php
+				
+- pages/
+	- dir/
+		- anotherDir/
+			- pageName/
+				- Page.php
+				- view.php
+```
+
 Структура:
 
 ```
