@@ -80,10 +80,9 @@ MessageRepo::save($message);
 
 // ACTIONS
 
-$post = Request::send('post/get', [
-    'id' => $pageId,
-]);
-Request::send('post/add.view', [
+$post = Request::send(['post/get', 'id' => $pageId]);
+Request::send([
+    'post/add.view',
     'postId' => $postId,
     'userId' => null,
 ]);
@@ -91,10 +90,10 @@ Request::send('post/add.view', [
 // or
 
 $post['views']++;
-Request::send('post/save', [], $post);
+Request::send(['post/save'], $post);
 
-$author = Request::send('post/getAuthor', ['postId' => $postId])->data ?? null;
-$response = Request::send('notice/addForAuthorByPost', ['authorId' => $post['authorId']], $post);
+$author = Request::send(['post/getAuthor', 'postId' => $postId])->data ?? null;
+$response = Request::send(['notice/addForAuthorByPost'], $post);
 
 // Response
 
