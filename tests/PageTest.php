@@ -5,7 +5,6 @@
  * ТОЛЬКО:
  *      - Request (params, data, cookies, uri, userAgent)
  *      - Server (session)
- *      - Action
  * НИ МАППЕРА, НИ РЕПОЗИТОРИЯ, НИ БАЗЫ (!), НИЧЕГО...
  *
  * РАЗРАБОТКА ДОЛЖНА ПРОВОДИТЬСЯ ИЗ РАСЧЕТА, ЧТО У НАС ЕСТЬ ТОЛЬКО СЕРВИСЫ (МИКРО-СЕРВИСЫ) И НИЧЕГО БОЛЬШЕ.
@@ -24,6 +23,23 @@
  * ДОБАВИТЬ ВОМЗОЖНОСТЬ ОТКАТА ДЛЯ ДЕЙСТВИЯ (execute & unExecute) ДЛЯ РЕАЛИЗАЦИИ ТРАНЗАКЦИЙ
  */
 
+
+// Request - должен понимать когда происходит SelfRequest, а когда GlobalRequest
+Request::send() = function($url, $data) {
+    // local request (как в Yii2)
+    if (is_array($url)) {
+        $route = $url[0];
+        if ($route == true) {
+            // ... self request code ...
+        }
+        else {
+            // ... curl code ...
+        }
+    }
+    else {
+        // ... curl code ...
+    }
+}
 
 
 
@@ -64,31 +80,21 @@ MessageRepo::save($message);
 
 // ACTIONS
 
-$post = \actions\post\GetPost::executeNow([
+$post = Request::send('post/get', [
     'id' => $pageId,
 ]);
-\actions\post\IncrementPostViews::executeNow([
-    'post' => $post,
+Request::send('post/add.view', [
+    'postId' => $postId,
+    'userId' => null,
 ]);
 
 // or
 
 $post['views']++;
-\actions\post\Save::executeNow([], $post);
+Request::send('post/save', [], $post);
 
-$author = \actions\post\GetPostAuthor::executeNow([
-    'postId' => $postId,
-])->data ?? null;
-\actions\post\NoticeAuthorAboutNewPostView::executeNow([
-    'post' => $post,
-]);
-
-// and get value
-
-$response = \actions\message\CreateMessageForNoticeAuthorNewPostView::executeNow([
-    'post' => $post,
-]);
-$message = $response->success ? $response->data : null;
+$author = Request::send('post/getAuthor', ['postId' => $postId])->data ?? null;
+$response = Request::send('notice/addForAuthorByPost', ['authorId' => $post['authorId']], $post);
 
 // Response
 
