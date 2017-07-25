@@ -104,6 +104,23 @@ else if ($response->fail) {
     $response->error;
 }
 
+// 1. Если сервис существует в локальной видимости - то запрос не делается, сразу идет обращение к сервису
+// 2. Если сервис не существует в локальной видимости - то делается CURL запрос
+
+$request = new Request(['/post/get', 'id' => 123]);
+$response = $request->send();
+$post = $response->data ?? null;
+// or
+$post = Request::sendNow(['/post/get', 'id' => 123])->data;
+
+// если нужно сделать несколько действий можно использовать пул запросов, которые могут выполняться паралельно
+
+RequestPool::sendNow([
+    ['stat/newPost/add', 'pid' => $post->id],
+    ['subs/newPost/send', 'pid' => $post->id],
+    ['moderation/newPost/add', 'pid' => $post->id],
+], $isAsync = true);
+
 ?>
 <div class="content">
     ..code...
