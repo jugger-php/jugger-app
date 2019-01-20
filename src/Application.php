@@ -8,13 +8,13 @@ class Application
 	protected $params;
 	protected $rootDir;
 
-	public function __construct(array $params = [], DependencyContainer $di = null)
+	public function __construct(DependencyContainer $di, array $params = [])
 	{
 		$this->params = $params;
 		$this->setDi($di);
 	}
 
-	public function get(string $name)
+	public function getParam(string $name)
 	{
 		return $this->params[$name] ?? null;
 	}
@@ -39,49 +39,58 @@ class Application
 		return $this->rootDir;
 	}
 
-	public function run(array $params, $data)
+	public function run(string $route, array $params, $data = null)
 	{
 		$di = $this->getDi();
 
-		$request = $di->getClass(Request::class);
+		$request = $di->createClass(Request::class);
 		$request->setParams($params);
 		$request->setData($data);
 
-		return $this->runByRequest($request);
+		return $this->runByRequest($route, $request);
 	}
 
-	public function runByRequest(Request $request)
+	public function runByRequest(string $route, Request $request)
 	{
 		$di = $this->getDi();
 		try {
-			$router = $di->getClass(Router::class);
-			$route = $router->getRoute($request);
-			if (!$route) {
-				throw new \Exception("Не удалось выгрузить маршрут из запроса");
-			}
-
-			$action = $this->getAction($route);
-			if (!$action) {
+			$router = new Router($this->rootDir);
+			$actionClass = $router->getActionClass($route);
+			if (!$actionClass) {
 				throw new \Exception("Не удалось найти экшон по маршруту '{$route}'");
 			}
 
-			$action->setRequest($request);
+			$reflectionClass = new \ReflectionClass($actionClass);
+			if (!$reflectionClass->isSubclassOf(Action::class)) {
+				throw new \Exception("Действие должно реализовывать класс ". Action::class);
+			}
+
+			$action = new $actionClass($this->di, $request);
 			$response = $action->run();
 			$response->send();
 		}
 		catch (\Throwable $e) {
-			$errorHanlder = $di->getClass(ErrorHandler::class);
+			$errorHanlder = $di->createClass(ErrorHandler::class);
 			if ($errorHanlder) {
 				$errorHanlder->process($e);
 			}
 			else {
+				echo "<pre>";
 				throw $e;
 			}
 		}
 	}
 
-	public function getAction(string $route)
+	public function checkDependencyContainer()
 	{
-		// поиск по rootDir
+		$obj = $this->di->createClass(Response::class);
+		if (!$obj) {
+			throw new \Exception("В контейнере должна быть реализация класса ". Response::class);
+		}
+
+		$obj = $this->di->createClass(Request::class);
+		if (!$obj) {
+			throw new \Exception("В контейнере должна быть реализация класса ". Request::class);
+		}
 	}
 }

@@ -2,16 +2,29 @@
 
 namespace jugger;
 
+/**
+ * Контейнер зависимостей
+ *
+ * Пример использования:
+ * 	$di = new \jugger\DependencyContainer();
+ * 	$di->setClass('\jugger\Router', '\jugger\DefaultRouter');
+ * 	$di->setSingleton('\jugger\Router', new DefaultRouter);
+ * 	$di->setClass('\jugger\Router', function($di){
+ * 		$firstClass = $di->createClass('FirstClass');
+ * 		return new SecondClass($firstClass);
+ * 	});
+ */
 class DependencyContainer
 {
 	const TYPE_OTHER = 1;
 	const TYPE_SINGLETON = 2;
 
 	protected $classes = [];
-	protected $singletones = [];
+	protected $singletonEntities = [];
 
 	public function setClass(string $abstractClass, $builder, int $type = null)
 	{
+		$abstractClass = ltrim($abstractClass, '\\');
 		$type = $type === self::TYPE_SINGLETON
 			? self::TYPE_SINGLETON
 			: self::TYPE_OTHER;
@@ -26,7 +39,7 @@ class DependencyContainer
 		$this->setClass($abstractClass, $builder, self::TYPE_SINGLETON);
 	}
 
-	public function getClass(string $className)
+	public function createClass(string $className)
 	{
 		$config = $this->classes[$className] ?? null;
 		if (!$config) {
@@ -34,11 +47,11 @@ class DependencyContainer
 		}
 
 		$object = null;
-		$singleton = $this->singletones[$className] ?? null;
 		if ($config['type'] === self::TYPE_SINGLETON) {
+			$singleton = $this->singletonEntities[$className] ?? null;
 			if (!$singleton) {
 				$singleton = $this->getObjectByBuilder($config['builder']);
-				$this->singletones[$className] = $singleton;
+				$this->singletonEntities[$className] = $singleton;
 			}
 			$object = $singleton;
 		}

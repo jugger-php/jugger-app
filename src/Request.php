@@ -12,9 +12,19 @@ class Request
 		$this->params = $params;
 	}
 
+	public function setParam(string $name, $value)
+	{
+		$this->params[$name] = $value;
+	}
+
 	public function getParams()
 	{
 		return $this->params ?? [];
+	}
+
+	public function getParam(string $name)
+	{
+		return $this->getParams()[$name] ?? null;
 	}
 
 	public function setData($data)

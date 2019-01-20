@@ -2,7 +2,7 @@
 
 namespace jugger;
 
-class Response
+abstract class Response
 {
 	protected $data;
 
@@ -16,11 +16,7 @@ class Response
 		return $this->data;
 	}
 
-	/**
-	 * Возвращает данные с учетом типа (raw, json, xml, ...)
-	 */
-	public function getContent()
-	{
-		return $this->data;
-	}
+	abstract public function send();
+
+	abstract public function getContent();
 }
