@@ -92,5 +92,10 @@ class Application
 		if (!$obj) {
 			throw new \Exception("В контейнере должна быть реализация класса ". Request::class);
 		}
+
+		$obj = $this->di->createClass(UrlRewriter::class);
+		if (!$obj) {
+			throw new \Exception("В контейнере должна быть реализация класса ". UrlRewriter::class);
+		}
 	}
 }

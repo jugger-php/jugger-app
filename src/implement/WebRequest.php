@@ -1,6 +1,6 @@
 <?php
 
-namespace jugger\classes;
+namespace jugger\implement;
 
 use jugger\Request;
 

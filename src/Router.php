@@ -13,7 +13,7 @@ class Router
 
 	/**
 	 * Роутер должен быть в формате '/moduleName/path/to/ActionClassName'
-	 * и преобразовываться в '/moduleName/path/to/ActionClassName.php'
+	 * и преобразовываться в '/modules/moduleName/actions/path/to/ActionClassName.php'
 	 * @param  string $route путь до экшона
 	 */
 	public function getActionClass(string $route): ?string
@@ -49,7 +49,7 @@ class Router
 		$actionPath = realpath("{$basePath}/{$moduleName}/actions/{$partsPath}/{$actionName}.php");
 		if (!$actionPath) {
 			// возвращаем пустой массив, чтобы можно было корректно обрабатывать 404 ошибку
-			return [];
+			return [null, null];
 		}
 		else if (strpos($actionPath, $basePath) !== 0) {
 			throw new \Exception("Указан некорректный формат пути до экшона");
