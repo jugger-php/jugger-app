@@ -14,7 +14,7 @@ trait SimpleEventManagerTrait
         $this->eventHandlers[$name][] = $handler;
     }
     
-    protected function trigger(string $name, array $params)
+    public function trigger(string $name, array $params)
     {
         $handlers = $this->eventHandlers[$name] ?? [];
         foreach ($handlers as $handler) {

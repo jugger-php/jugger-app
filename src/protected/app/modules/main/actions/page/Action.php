@@ -2,17 +2,20 @@
 
 namespace app\modules\main\actions\page;
 
-use app\themes\main\Theme;
 use jugger\core\web\NotFoundException;
+use jugger\widget\Theme;
 
 class Action extends \jugger\core\Action
 {
+    protected $theme;
+
     public function prepareResponse()
     {
-        $theme = new Theme();
-        $theme->setRequest($this->request);
-        $theme->setContent($this->response->getData());
-        $this->response->setData($theme->render());
+        $theme = $this->context->theme;
+        if ($theme instanceof Theme) {
+            $theme->setTemplate($this->theme);
+            $theme->updateResponseAction($this);
+        }
     }
 
     public function runInternal()
@@ -23,6 +26,12 @@ class Action extends \jugger\core\Action
             throw new NotFoundException;
         }
 
+        if ($view === 'main.php') {
+            $this->theme = 'main-front';
+        }
+        else {
+            $this->theme = 'main';
+        }
         return $this->render($view);
     }
 }

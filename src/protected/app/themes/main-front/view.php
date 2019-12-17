@@ -28,6 +28,16 @@ use app\widgets\menu\Menu;
                 'activeLink' => "/{$context->getRequest()->getPath()}",
             ]) ?>
         </div>
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="display-4">
+                    Заголовок
+                </h1>
+                <p class="lead">
+                    баннер на главной
+                </p>
+            </div>
+        </div>
     </header>
     <main>
         <div class="container">

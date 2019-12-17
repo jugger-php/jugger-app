@@ -11,7 +11,7 @@
     }
     ?>
     <div class="navbar-collapse collapse">
-        <ul class="navbar-nav">
+        <ul class="ml-auto navbar-nav">
             <?php foreach ($context->items as $name => $link) { ?>
                 <?php
                 $active = $link === $context->activeLink ? "active" : "";

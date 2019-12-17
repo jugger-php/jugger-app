@@ -6,21 +6,32 @@ use jugger\core\web\Response as WebResponse;
 
 abstract class Action
 {
-    protected $di;
+    protected $context;
     protected $request;
     protected $response;
     
     abstract protected function runInternal();
     
-    public function __construct(Request $request)
+    public function __construct(Request $request, Context $context = null)
     {
+        $this->context = $context;
         $this->request = $request;
         $this->response = new WebResponse();
     }
-    
-    public function setDi(DependencyContainer $di)
+
+    public function setContext(Context $context)
     {
-        $this->di = $di;
+        $this->context = $context;
+    }
+
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
+
+    public function getResponse(): Response
+    {
+        return $this->response;
     }
     
     public function run(): Response
