@@ -1,6 +1,6 @@
 <?php
 
-namespace jugger;
+namespace jugger\core;
 
 class Autoloader
 {
@@ -10,21 +10,7 @@ class Autoloader
     {
         spl_autoload_register(array($this, 'loadClass'));
     }
-
-    public function addNamespace($prefix, $base_dir, $prepend = false)
-    {
-        $prefix = trim($prefix, '\\') . '\\';
-        $base_dir = rtrim($base_dir, DIRECTORY_SEPARATOR) . '/';
-        if (isset($this->prefixes[$prefix]) === false) {
-            $this->prefixes[$prefix] = array();
-        }
-
-        if ($prepend) {
-            array_unshift($this->prefixes[$prefix], $base_dir);
-        } else {
-            array_push($this->prefixes[$prefix], $base_dir);
-        }
-    }
+    
 
     public function loadClass($class)
     {
@@ -36,6 +22,7 @@ class Autoloader
             if ($mapped_file) {
                 return $mapped_file;
             }
+
             $prefix = rtrim($prefix, '\\');
         }
         return false;
@@ -47,7 +34,6 @@ class Autoloader
             return false;
         }
         foreach ($this->prefixes[$prefix] as $base_dir) {
-
             $file = $base_dir
                   . str_replace('\\', '/', $relative_class)
                   . '.php';
@@ -65,5 +51,21 @@ class Autoloader
             return true;
         }
         return false;
+    }
+
+    public function addNamespace($prefix, $base_dir, $prepend = false)
+    {
+        $prefix = trim($prefix, '\\') . '\\';
+        $base_dir = rtrim($base_dir, DIRECTORY_SEPARATOR) . '/';
+        if (isset($this->prefixes[$prefix]) === false) {
+            $this->prefixes[$prefix] = array();
+        }
+
+        if ($prepend) {
+            array_unshift($this->prefixes[$prefix], $base_dir);
+        }
+        else {
+            array_push($this->prefixes[$prefix], $base_dir);
+        }
     }
 }
