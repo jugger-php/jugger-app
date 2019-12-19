@@ -44,8 +44,18 @@ use app\widgets\menu\Menu;
             <?= $context->getContent() ?>
         </div>
     </main>
-    <footer>
-        копирайт и ссылки
+    <footer class="footer bg-dark text-light">
+        <div class="container footerContainer">
+            <div class="footerContainer__col">
+                лого и копирайт
+            </div>
+            <div class="footerContainer__col">
+                меню
+            </div>
+            <div class="footerContainer__col">
+                ссылки и контакты
+            </div>
+        </div>
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
