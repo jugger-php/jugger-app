@@ -45,16 +45,6 @@ class Lets
         }
     }
 
-    protected function createContext(): Context
-    {
-        $context = new Context();
-        $path = APP_ROOT_DIR .'/config/context.php';
-        if (file_exists($path)) {
-            include $path;
-        }
-        return $context;
-    }
-    
     public static function go(string $appRoot)
     {
         define('APP_ROOT_DIR', $appRoot);
@@ -67,7 +57,6 @@ class Lets
         $app->initServices();
         $app->initEventHandlers();
 
-        $context = $app->createContext();
         try {
             $rules = $app->getRules();
             $router = new Router($appRoot);
@@ -80,7 +69,6 @@ class Lets
                 throw new NotFoundException();
             }
             
-            $action->setContext($context);
             $app->trigger(self::EVENT_BEFORE_RUN_ACTION, [$action]);
             $response = $action->run();
             

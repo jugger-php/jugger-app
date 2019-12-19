@@ -1,3 +1,14 @@
+<?php
+
+use app\widgets\menu\Menu;
+use jugger\core\Renderer;
+
+/**
+ * @var Renderer $this
+ * @var Menu $context
+ */
+
+?>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <?php
     if ($context->brand) {

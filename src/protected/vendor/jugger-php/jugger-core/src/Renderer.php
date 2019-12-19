@@ -11,17 +11,17 @@ class Renderer
     {
         $this->basePath = $path;
     }
-    
+
     public function setContext($context)
     {
-        $refClass = new \ReflectionClass($context);
         $this->context = $context;
-        if ($this->basePath === null) {
+        if (!$this->basePath) {
+            $refClass = new \ReflectionClass($context);
             $this->basePath = dirname($refClass->getFileName());
         }
     }
     
-    public function render(string $view): string
+    public function render(string $view, array $params = []): string
     {
         $path = rtrim($this->basePath, '/') ."/{$view}";
         if (!pathinfo($view, \PATHINFO_EXTENSION)) {
@@ -29,8 +29,9 @@ class Renderer
         }
         
         if (file_exists($path)) {
-            $context = $this->context;
             try {
+                $context = $this->context;
+                
                 ob_start();
                 include $path;
                 return ob_get_clean();
