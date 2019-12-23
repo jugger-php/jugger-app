@@ -194,6 +194,8 @@ $autoloader->addNamespace("jugger\\collection", __DIR__.'/jugger-php/jugger-coll
 $autoloader->addNamespace("jugger\\repo", __DIR__.'/jugger-php/jugger-repo/src');
 $autoloader->addNamespace("jugger\\datamapper", __DIR__.'/jugger-php/jugger-datamapper/src');
 $autoloader->addNamespace("jugger\\widget", __DIR__.'/jugger-php/jugger-widget/src');
+$autoloader->addNamespace("jugger\\assetsWidget", __DIR__.'/jugger-php/jugger-assets-widget/src');
+$autoloader->addNamespace("jugger\\assets", __DIR__.'/jugger-php/jugger-assets/src');
 $autoloader->addNamespace("jugger\\DbCollection", __DIR__.'/jugger-php/jugger-db-collection/src');
 $autoloader->register();
 

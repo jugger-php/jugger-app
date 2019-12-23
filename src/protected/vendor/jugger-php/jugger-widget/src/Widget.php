@@ -3,20 +3,21 @@
 namespace jugger\widget;
 
 use Exception;
+use jugger\assets\AssetsManager;
 use jugger\core\Renderer;
 
 abstract class Widget
 {
-    protected $assets;
+    protected $assetsManager;
     protected $template;
 
     abstract protected function runInternal(array $params): string;
 
-    public static function run(string $template, array $params = [], Assets $assets = null): string
+    public static function run(string $template, array $params = [], AssetsManager $assetsManager = null): string
     {
         $self = new static();
-        $self->assets = $assets;
         $self->template = $template;
+        $self->assetsManager = $assetsManager ?: new AssetsManager;
         return $self->runInternal($params);
     }
 
@@ -34,5 +35,10 @@ abstract class Widget
         $renderer = new Renderer();
         $renderer->setContext($this);
         return $renderer->render($view, $params);
+    }
+
+    public function getAssetsManager(): AssetsManager
+    {
+        return $this->assetsManager;
     }
 }

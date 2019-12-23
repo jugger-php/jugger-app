@@ -3,13 +3,14 @@
 namespace jugger\widget;
 
 use Exception;
+use jugger\assets\AssetsManager;
 use jugger\core\Action;
 use jugger\core\Renderer;
 use jugger\core\Request;
 
 class Theme
 {
-    protected $assets;
+    protected $assetsManager;
     protected $content = "";
     protected $request;
     protected $template;
@@ -17,8 +18,8 @@ class Theme
 
     public function __construct(string $basePath = null)
     {
-        $this->assets = new Assets;
         $this->basePath = $basePath;
+        $this->assetsManager = new AssetsManager;
     }
 
     public function setTemplate(string $template)
@@ -46,9 +47,9 @@ class Theme
         return $this->content;
     }
 
-    public function getAssets(): Assets
+    public function getAssetsManager(): AssetsManager
     {
-        return $this->assets;
+        return $this->assetsManager;
     }
 
     public function render()
@@ -72,7 +73,7 @@ class Theme
         if (!$refClass->isSubclassOf(Widget::class)) {
             throw new Exception("Arg '{$className}' must be extend ". Widget::class);
         }
-        return $className::run($template, $params, $this->assets);
+        return $className::run($template, $params, $this->assetsManager);
     }
 
     public function updateResponseAction(Action $action)

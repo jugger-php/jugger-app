@@ -19,6 +19,7 @@ class Action extends \jugger\core\Action
     public function runInternal()
     {
         $view  = $this->params['code'] ?? 'main';
+        $view  = 'views/'. preg_replace('/[^a-z0-9\-\_]+/i', '', $view);
         $view .= '.php';
         if (!file_exists(__DIR__.'/'.$view)) {
             throw new NotFoundException;
