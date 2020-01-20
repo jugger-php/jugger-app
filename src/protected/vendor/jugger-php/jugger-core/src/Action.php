@@ -15,6 +15,12 @@ abstract class Action
     {
         $this->request = $request;
         $this->response = new WebResponse();
+        $this->init();
+    }
+
+    protected function init()
+    {
+        
     }
 
     public function getRequest(): Request
@@ -29,20 +35,25 @@ abstract class Action
     
     public function run(): Response
     {
-        $data = $this->runInternal();
-        if ($data) {
+        $this->beforeRun();
+        if ($data = $this->runInternal()) {
             $this->response->setData($data);
         }
-        $this->prepareResponse();
+        $this->afterRun();
         return $this->response;
     }
 
-    protected function prepareResponse()
+    protected function beforeRun()
+    {
+        
+    }
+
+    protected function afterRun()
     {
         
     }
     
-    public function render(string $name)
+    protected function render(string $name)
     {
         $renderer = new Renderer();
         $renderer->setContext($this);

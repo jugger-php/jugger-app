@@ -1,8 +1,9 @@
 <?php
 
-namespace jugger\core\helpers;
+namespace jugger\di;
 
 use Exception;
+use ReflectionClass;
 
 class ServiceLocator
 {
@@ -26,7 +27,7 @@ class ServiceLocator
 
         $config = $this->configs[$id] ?? null;
         if (is_null($config)) {
-            throw new \Exception("Not found container item '{$id}'");
+            throw new Exception("Not found container item '{$id}'");
         }
         else {
             return $this->instances[$id] = $this->buildObject($config);
@@ -62,6 +63,32 @@ class ServiceLocator
         else {
             return null;
         }
+    }
+
+    public function getFilledArgs(string $className): array
+    {
+        $ref = new ReflectionClass($className);
+        $refConstruct = $ref->getConstructor();
+
+        $args = [];
+        $refParams = $refConstruct->getParameters();
+        foreach ($refParams as $refParam) {
+            $value = null;
+            if ($refParam->isOptional()) {
+                $value = $refParam->getDefaultValue();
+            }
+            
+            $class = $refParam->getClass();
+            if ($class) {
+                $className = $class->getName();
+                if ($this->has($className)) {
+                    $value = $this->get($className);
+                }
+            }
+
+            $args[] = $value;
+        }
+        return $args;
     }
     
     public function __get($id)

@@ -2,7 +2,9 @@
 
 namespace jugger\core\web;
 
-class NotFoundException extends HttpException
+use Exception;
+
+class NotFoundException extends Exception
 {
     public function __construct(string $message = "Not found")
     {

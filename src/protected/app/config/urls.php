@@ -4,14 +4,11 @@
  * Список URL шаблонов
  * 
  * Например:
- *  1. 'page/view/{id}' => 'page/view'
+ *  1. 'page/view/{id}' => 'module/action'
  *  переменная id будет инициированная в качестве параметров запроса
  *  
- *  2. 'page/view/{code:\w+}' => 'page/view'
+ *  2. 'page/view/{code:\w+}' => 'module/path/to/action'
  *  в переменной code будет храниться строка удовлетворяющая регулярке '\w+'
- *
- *  3. 'module/{name:\w+}' => 'module/{name}',
- *  переменные также могут подставляться и в путь до модуля
  * 
  * @var array
  */

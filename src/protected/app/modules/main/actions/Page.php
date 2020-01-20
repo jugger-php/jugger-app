@@ -1,19 +1,25 @@
 <?php
 
-namespace app\modules\main\actions\page;
+namespace app\modules\main\actions;
 
+use jugger\assets\AssetsManager;
+use jugger\core\Action;
+use jugger\core\Request;
 use jugger\core\web\NotFoundException;
-use jugger\widget\Theme;
 
-class Action extends \jugger\core\Action
+class Page extends Action
 {
-    protected $themeTemplate;
+    protected $assetsManager;
 
-    public function prepareResponse()
+    public function __construct(Request $request, AssetsManager $assetsManager)
     {
-        $theme = new Theme(APP_THEMES_DIR);
-        $theme->setTemplate($this->themeTemplate);
-        $theme->updateResponseAction($this);
+        parent::__construct($request);
+        $this->assetsManager = $assetsManager;
+    }
+
+    public function getAssetsManager(): AssetsManager
+    {
+        return $this->assetsManager;
     }
 
     public function runInternal()

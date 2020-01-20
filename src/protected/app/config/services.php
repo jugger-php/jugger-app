@@ -1,5 +1,6 @@
 <?php
 
+use jugger\assets\AssetsManager;
 use jugger\core\Lets;
 use jugger\core\ServiceLocator;
 
@@ -8,6 +9,6 @@ use jugger\core\ServiceLocator;
  * @var ServiceLocator  $services
  */
 
-define('APP_THEMES_DIR', APP_ROOT_DIR .'/themes');
-
-$services->set('cache', 'cacheClass');
+$services->set('jugger\assets\AssetsManager', function () {
+    return new AssetsManager($this->appRoot);
+});

@@ -4,16 +4,25 @@ namespace jugger\assets;
 
 class AssetsManager
 {
+    protected $appRoot;
+    protected $baseDir;
     protected $groupsAssets = [];
+
+    public function __construct(string $appRoot, string $baseDir = 'assets')
+    {
+        $this->appRoot = rtrim($appRoot, '/');
+        $this->baseDir = $baseDir;
+    }
 
     public function add(string $group, Asset $asset)
     {
         $name = $asset->getName() ?: md5(serialize($asset));
         $group = strtolower($group);
         
-        $groupsAssets = $this->groupsAssets[$group] ?? [];
-        $groupsAssets[$name] = $asset;
-        $this->groupsAssets[$group] = $groupsAssets;
+        if (!isset($this->groupsAssets[$group])) {
+            $this->groupsAssets[$group] = [];
+        }
+        $this->groupsAssets[$group][$name] = $asset;
     }
 
     public function addJs(string $value, array $params = [], string $name = null)
@@ -50,21 +59,20 @@ class AssetsManager
         $name = pathinfo($path, \PATHINFO_BASENAME);
         $hash = md5($path);
 
-        $publicDir = '/assets/'. substr($hash, 0, 2);
-        $publicPath = $_SERVER['DOCUMENT_ROOT'] . $publicDir .'/'. $name;
-        if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $publicDir)) {
-            @mkdir($publicDir, 0755, true);
+        $publicDir = "{$this->appRoot}/{$this->baseDir}/". substr($hash, 0, 2);
+        $publicPath = $publicDir .'/'. $name;
+        if (!file_exists($publicDir)) {
+            mkdir($publicDir, 0755, true);
         }
 
         $pathTime = filemtime($path);
-        $publicPathTime = filemtime($publicPath);
+        $publicPathTime = file_exists($publicPath) ? filemtime($publicPath) : 0;
         if ($pathTime !== $publicPathTime) {
             copy($path, $publicPath);
+            touch($publicPath, $pathTime);
         }
 
-        echo '<pre>';
-        var_dump($publicPath);
-        echo '</pre>';
-        die();
+        $publicUrl = substr($publicPath, strlen($this->appRoot));
+        return $publicUrl.'?'.$pathTime;
     }
 }

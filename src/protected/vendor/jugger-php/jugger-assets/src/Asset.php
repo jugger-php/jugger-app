@@ -4,7 +4,7 @@ namespace jugger\assets;
 
 class Asset
 {
-    protected $type = 'simple';
+    protected $type;
     protected $name;
     protected $value;
     protected $params = [];

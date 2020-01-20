@@ -7,11 +7,22 @@ class RouterRule
     protected $defaultRe = '[a-z0-9\-\_\.]+';
     
     protected $args = [];
+    protected $path;
     protected $pattern;
     
     public function __construct(string $pattern)
     {
         $this->pattern = $pattern;
+    }
+
+    public function setPath(string $value)
+    {
+        $this->path = $value;
+    }
+
+    public function getPath(): ?string
+    {
+        return $this->path;
     }
     
     public function getArgs(): array

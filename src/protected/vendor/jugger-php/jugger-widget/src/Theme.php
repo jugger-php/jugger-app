@@ -47,6 +47,11 @@ class Theme
         return $this->content;
     }
 
+    public function setAssetsManager(AssetsManager $value)
+    {
+        $this->assetsManager = $value;
+    }
+
     public function getAssetsManager(): AssetsManager
     {
         return $this->assetsManager;
@@ -76,7 +81,7 @@ class Theme
         return $className::run($template, $params, $this->assetsManager);
     }
 
-    public function updateResponseAction(Action $action)
+    public function updateActionResponse(Action $action)
     {
         $this->setRequest($action->getRequest());
         $this->setContent($action->getResponse()->getData());
