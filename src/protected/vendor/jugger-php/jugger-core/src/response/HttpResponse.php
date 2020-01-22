@@ -1,8 +1,10 @@
 <?php
 
-namespace jugger\core\web;
+namespace jugger\core\response;
 
-class Response extends \jugger\core\Response
+use jugger\core\Response;
+
+class HttpResponse extends Response
 {
     protected $headers = [];
     protected $cookies = [];

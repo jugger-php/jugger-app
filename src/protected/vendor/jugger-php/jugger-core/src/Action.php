@@ -2,7 +2,8 @@
 
 namespace jugger\core;
 
-use jugger\core\web\Response as WebResponse;
+use ReflectionClass;
+use jugger\core\response\HttpResponse;
 
 abstract class Action
 {
@@ -14,7 +15,7 @@ abstract class Action
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->response = new WebResponse();
+        $this->response = new HttpResponse();
         $this->init();
     }
 
@@ -52,10 +53,19 @@ abstract class Action
     {
         
     }
+
+    protected function getBasePath(): string
+    {
+        $class = get_called_class();
+        $ref = new ReflectionClass($class);
+        $path = $ref->getFileName();
+        return dirname($path) .'/../views';
+    }
     
     protected function render(string $name)
     {
         $renderer = new Renderer();
+        $renderer->setBasePath($this->getBasePath());
         $renderer->setContext($this);
         return $renderer->render($name);
     }

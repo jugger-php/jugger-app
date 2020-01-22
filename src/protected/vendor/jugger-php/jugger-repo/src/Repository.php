@@ -2,6 +2,7 @@
 
 namespace jugger\repo;
 
+use InvalidArgumentException;
 use jugger\model\Model;
 use jugger\criteria\Criteria;
 use jugger\criteria\SimpleCriteriaBuilder;
@@ -30,7 +31,7 @@ abstract class Repository
             $criteria = SimpleCriteriaBuilder::build($criteria);
         }
         else if (($criteria instanceof Criteria) === false) {
-            throw new \InvalidArgumentException("Parametr 'criteria' must be array or ". Criteria::class);
+            throw new InvalidArgumentException("Parametr 'criteria' must be array or ". Criteria::class);
         }
         return $this->getModelsCollection($criteria);
     }

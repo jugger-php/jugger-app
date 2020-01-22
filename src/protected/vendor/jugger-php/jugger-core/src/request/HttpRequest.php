@@ -1,13 +1,13 @@
 <?php
 
-namespace jugger\core\web;
+namespace jugger\core\request;
 
-class Request extends \jugger\core\Request
+use jugger\core\Request;
+
+class HttpRequest extends Request
 {
-    protected $server = [];
     protected $headers = [];
     protected $cookies = [];
-    protected $session = [];
 
     public static function build()
     {
@@ -17,9 +17,7 @@ class Request extends \jugger\core\Request
         $self = new static($path);
         $self->data = $_POST;
         $self->params = $_GET;
-        $self->server = $_SERVER;
         $self->cookies = $_COOKIE;
-        $self->session = $_SESSION;
         $self->headers = self::getRequestHeaders();
         
         return $self;
@@ -62,25 +60,5 @@ class Request extends \jugger\core\Request
     public function getCookies(): array
     {
         return $this->cookies;
-    }
-    
-    public function getServer(string $name)
-    {
-        return $this->server[$name] ?? null;
-    }
-    
-    public function getServers(): array
-    {
-        return $this->server;
-    }
-    
-    public function getSession(string $name)
-    {
-        return $this->server[$name] ?? null;
-    }
-    
-    public function getSessions(): array
-    {
-        return $this->server;
     }
 }

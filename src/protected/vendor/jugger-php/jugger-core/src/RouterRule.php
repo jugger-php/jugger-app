@@ -49,8 +49,11 @@ class RouterRule
                 $argNames[] = $argParts[0];
             }
         }
+        if (empty($newPattern)) {
+            $newPattern = preg_quote($this->pattern, '/');
+        }
+
         $pattern = "/^{$newPattern}$/i";
-        
         if (preg_match($pattern, $path, $m)) {
             for ($i=0; $i < count($argNames); $i++) {
                 $name = $argNames[$i];

@@ -2,14 +2,11 @@
 
 namespace jugger\core;
 
-use Exception;
-use jugger\core\Context;
 use jugger\core\Autoloader;
 use jugger\di\ServiceLocator;
-use jugger\core\web\Request as WebRequest;
 use jugger\core\web\NotFoundException;
 use jugger\core\helpers\SimpleEventManagerTrait;
-use jugger\core\RouterRule;
+use jugger\core\request\HttpRequest;
 
 class Lets
 {
@@ -21,7 +18,8 @@ class Lets
 
     protected $appRoot;
 
-    protected function __construct(string $appRoot) {
+    protected function __construct(string $appRoot)
+    {
         $this->appRoot = $appRoot;
     }
     
@@ -90,7 +88,7 @@ class Lets
             $rules = $app->getRules();
             $router = new Router($appRoot);
             $router->setRules($rules);
-            $request = WebRequest::build();
+            $request = HttpRequest::build();
             
             $app->trigger(self::EVENT_BEFORE_PARSE_REQUEST, [$request]);
             $actionPath = $router->parseRequest($request);
