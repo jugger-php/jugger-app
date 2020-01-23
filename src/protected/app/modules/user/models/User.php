@@ -14,6 +14,17 @@ class User extends Model
             new IntField('id'),
             new StringField('username'),
             new StringField('password'),
+            new StringField('token'),
         ];
+    }
+
+    public static function generateToken()
+    {
+        return bin2hex(random_bytes(10));
+    }
+
+    public function checkPassword(string $password)
+    {
+        return true;
     }
 }

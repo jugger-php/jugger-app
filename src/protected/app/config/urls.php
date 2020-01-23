@@ -13,8 +13,7 @@
  * @var array
  */
 return [
-    'login' => 'user/Login',
-    'logout' => 'user/Logout',
+    'auth' => 'user/Auth',
     'blog/get' => 'blog/Get',
     'blog/save' => 'blog/Save',
     'blog/delete' => 'blog/Delete',
