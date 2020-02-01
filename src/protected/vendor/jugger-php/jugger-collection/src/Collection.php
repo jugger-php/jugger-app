@@ -54,4 +54,9 @@ abstract class Collection implements \Countable, \IteratorAggregate, \JsonSerial
         }
         return $this;
     }
+
+    public function current()
+    {
+        return $this->getIterator()->current();
+    }
 }

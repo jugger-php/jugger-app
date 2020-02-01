@@ -2,17 +2,15 @@
 
 namespace jugger\core\response;
 
-use jugger\core\Response;
-
-class JsonResponse extends Response
+class JsonResponse extends HttpResponse
 {
+    public function __construct()
+    {
+        $this->setHeader('Content-type', 'application/json');
+    }
+
     public function getContent()
     {
         return json_encode($this->getData());
-    }
-
-    public function send()
-    {
-        echo $this->getContent();
     }
 }

@@ -25,6 +25,6 @@ class User extends Model
 
     public function checkPassword(string $password)
     {
-        return true;
+        return $this->password === $password;
     }
 }

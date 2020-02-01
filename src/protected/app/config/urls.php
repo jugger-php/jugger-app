@@ -14,6 +14,7 @@
  */
 return [
     'auth' => 'user/Auth',
+    'register' => 'user/Register',
     'blog/get' => 'blog/Get',
     'blog/save' => 'blog/Save',
     'blog/delete' => 'blog/Delete',

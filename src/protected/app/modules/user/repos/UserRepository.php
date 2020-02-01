@@ -2,13 +2,14 @@
 
 namespace app\modules\user\repos;
 
-use jugger\collection\ArrayCollection;
 use jugger\collection\Collection;
 use jugger\criteria\Criteria;
+use jugger\db\Query;
+use jugger\DbCollection\QueryResultCollection;
 use jugger\model\Model;
-use jugger\repo\Repository;
+use jugger\repo\ConnectionRepository;
 
-class UserRepository extends Repository
+class UserRepository extends ConnectionRepository
 {
     public function save(Model $model): bool
     {
@@ -17,6 +18,13 @@ class UserRepository extends Repository
     
     protected function getModelsCollection(?Criteria $criteria): Collection
     {
-        return new ArrayCollection([]);
+        $q = (new Query)->from('user');
+        if ($criteria) {
+            $q->where($criteria);
+        }
+
+        return new QueryResultCollection(
+            $this->db->query($q)
+        );
     }
 }

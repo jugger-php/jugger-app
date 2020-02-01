@@ -2,6 +2,8 @@
 
 namespace jugger\core;
 
+use Exception;
+
 class Response
 {
     protected $data;
@@ -23,6 +25,6 @@ class Response
     
     public function send()
     {
-        throw new \Exception("Not sendable response");
+        throw new Exception("Not sendable response");
     }
 }
