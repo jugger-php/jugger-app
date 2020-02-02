@@ -13,6 +13,17 @@ class UserRepository extends ConnectionRepository
 {
     public function save(Model $model): bool
     {
+        $values = $model->getValues();
+        unset($values['id']);
+        if ($model->id) {
+            $this->db->update('user', $values, [
+                'id' => $model->id,
+            ]);
+        }
+        else {
+            $this->db->insert('user', $values);
+            $model->id = $this->db->getLastInsertId();
+        }
         return true;
     }
     

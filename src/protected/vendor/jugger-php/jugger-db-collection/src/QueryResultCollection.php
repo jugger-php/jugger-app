@@ -2,6 +2,7 @@
 
 namespace jugger\DbCollection;
 
+use Iterator;
 use jugger\db\QueryResult;
 use jugger\collection\IteratorCollection;
 
@@ -14,7 +15,7 @@ class QueryResultCollection extends IteratorCollection
         $this->result = $result;
     }
     
-    public function getIterator(): \Iterator
+    public function getIterator(): Iterator
     {
         return $this->result->getIterator();
     }

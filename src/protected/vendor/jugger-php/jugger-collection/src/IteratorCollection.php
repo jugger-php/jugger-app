@@ -12,7 +12,8 @@ abstract class IteratorCollection extends Collection
     public function map(callable $callback): Collection
     {
         $new = [];
-        foreach ($this->getIterator() as $key => $value) {
+        $iterator = $this->getIterator();
+        foreach ($iterator as $key => $value) {
             $new[$key] = call_user_func($callback, $value, $key);
         }
         return new ArrayCollection($new);
@@ -21,7 +22,8 @@ abstract class IteratorCollection extends Collection
     public function filter(callable $callback): Collection
     {
         $new = [];
-        foreach ($this->getIterator() as $key => $value) {
+        $iterator = $this->getIterator();
+        foreach ($iterator as $key => $value) {
             $ret = call_user_func($callback, $value, $key);
             if ($ret === true) {
                 $new[$key] = $value;
@@ -32,7 +34,8 @@ abstract class IteratorCollection extends Collection
     
     public function find(callable $callback)
     {
-        foreach ($this->getIterator() as $key => $value) {
+        $iterator = $this->getIterator();
+        foreach ($iterator as $key => $value) {
             $ret = call_user_func($callback, $value, $key);
             if ($ret === true) {
                 return $value;
