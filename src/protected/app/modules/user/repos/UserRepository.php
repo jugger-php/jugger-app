@@ -2,6 +2,8 @@
 
 namespace app\modules\user\repos;
 
+use app\modules\user\models\User;
+use jugger\collection\AdapterCallbackCollection;
 use jugger\collection\Collection;
 use jugger\criteria\Criteria;
 use jugger\db\Query;
@@ -34,8 +36,10 @@ class UserRepository extends ConnectionRepository
             $q->where($criteria);
         }
 
-        return new QueryResultCollection(
-            $this->db->query($q)
-        );
+        $result = $this->db->query($q);
+        $collection = new QueryResultCollection($result);
+        return new AdapterCallbackCollection($collection, function($item) {
+            return new User($item);
+        });
     }
 }

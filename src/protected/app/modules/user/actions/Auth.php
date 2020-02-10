@@ -30,7 +30,7 @@ class Auth extends Action
         }
 
         $repo = new UserRepository($this->db);
-        $user = $repo->getByUsername($username);
+        $user = $repo->getByUsername($username)->current();
         if (!$user || !$user->checkPassword($password)) {
             throw new Exception("Access denied", 403);
         }
