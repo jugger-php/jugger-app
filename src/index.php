@@ -2,6 +2,6 @@
 
 require __DIR__.'/protected/vendor/autoload.php';
 
-$appRoot = __DIR__.'/protected/app';
+define('APP_ROOT', __DIR__.'/protected/app');
 
-\jugger\core\Lets::go($appRoot);
+\jugger\core\Lets::go(APP_ROOT);

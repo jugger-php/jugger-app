@@ -13,10 +13,12 @@
  * @var array
  */
 return [
-    'auth' => 'user/Auth',
-    'register' => 'user/Register',
-    'blog/get' => 'blog/Get',
-    'blog/save' => 'blog/Save',
-    'blog/delete' => 'blog/Delete',
-    'blog/getlist' => 'blog/GetList',
+    'cms' => 'cms/index',
+    'cms/{path}' => 'cms/page',
+    'blog/{code}' => 'blog/view',
+    'blog' => 'blog/list',
+    'solutions/{code}' => 'solutions/view',
+    'solutions' => 'solutions/index',
+    '{url}' => 'page/view',
+    '' => 'page/index',
 ];

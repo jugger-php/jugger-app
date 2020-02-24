@@ -2,18 +2,18 @@
 
 use jugger\assets\AssetsManager;
 use jugger\core\Lets;
-use jugger\core\ServiceLocator;
 use jugger\db\driver\MysqliConnection;
+use jugger\di\ServiceLocator;
 
 /**
- * @var Lets            $this
- * @var ServiceLocator  $services
+ * @var Lets $this
  */
 
 $appRoot = $this->appRoot;
-$publicPath = $appRoot .'../../';
+$services = ServiceLocator::getInstance();
 
-$services->set('jugger\assets\AssetsManager', function() use($publicPath) {
+$services->set('jugger\assets\AssetsManager', function() use($appRoot) {
+    $publicPath = $appRoot .'../../';
     return new AssetsManager($publicPath, $publicPath .'/assets');
 });
 
@@ -25,3 +25,5 @@ $services->set('jugger\db\ConnectionInterface', function() {
         "jugger_local"
     );
 });
+
+$services->set('jugger\core\ErrorHandler', 'jugger\core\ErrorHandler');

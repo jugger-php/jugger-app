@@ -4,13 +4,7 @@ namespace jugger\core;
 
 class Router
 {
-    protected $appRoot;
     protected $rules = [];
-    
-    public function __construct(string $appRoot)
-    {
-        $this->appRoot = $appRoot;
-    }
     
     public function setRules(array $rules)
     {

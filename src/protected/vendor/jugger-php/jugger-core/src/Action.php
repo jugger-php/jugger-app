@@ -36,17 +36,19 @@ abstract class Action
     
     public function run(): Response
     {
-        $this->beforeRun();
-        if ($data = $this->runInternal()) {
-            $this->response->setData($data);
+        if ($this->beforeRun()) {
+            if ($data = $this->runInternal()) {
+                $this->response->setData($data);
+            }
         }
         $this->afterRun();
+        
         return $this->response;
     }
 
-    protected function beforeRun()
+    protected function beforeRun(): bool
     {
-        
+        return true;
     }
 
     protected function afterRun()
@@ -59,7 +61,7 @@ abstract class Action
         $class = get_called_class();
         $ref = new ReflectionClass($class);
         $path = $ref->getFileName();
-        return dirname($path) .'/../views';
+        return dirname($path) .'/views';
     }
     
     protected function render(string $name)

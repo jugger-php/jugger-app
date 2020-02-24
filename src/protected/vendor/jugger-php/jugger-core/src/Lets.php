@@ -43,7 +43,6 @@ class Lets
 
     protected function initServices()
     {
-        $services = ServiceLocator::getInstance();
         $path = $this->appRoot .'/config/services.php';
         if (file_exists($path)) {
             include $path;
@@ -59,15 +58,12 @@ class Lets
         $actionClass = null;
         $subNamespace = join("\\", $parts);
         if ($subNamespace) {
-            $actionClass = "app\\modules\\{$moduleName}\\actions\\{$subNamespace}\\{$actionName}";
+            $actionClass = "app\\modules\\{$moduleName}\\actions\\{$subNamespace}\\{$actionName}Action";
         }
         else {
-            $actionClass = "app\\modules\\{$moduleName}\\actions\\{$actionName}";
+            $actionClass = "app\\modules\\{$moduleName}\\actions\\{$actionName}Action";
         }
-
-        $args = ServiceLocator::getInstance()->getFilledArgs($actionClass);
-        $args[0] = $request;
-        return new $actionClass(...$args);
+        return ServiceLocator::getInstance()->createObject($actionClass, [ $request ]);
     }
 
     protected function initAutoloader()
@@ -86,7 +82,7 @@ class Lets
 
         try {
             $rules = $app->getRules();
-            $router = new Router($appRoot);
+            $router = new Router();
             $router->setRules($rules);
             $request = HttpRequest::build();
             
@@ -105,8 +101,8 @@ class Lets
         }
         catch (\Throwable $e) {
             $services = ServiceLocator::getInstance();
-            if ($services->has('errorHandler')) {
-                $services->get('errorHandler')->process($e);
+            if ($services->has('jugger\core\ErrorHandler')) {
+                $services->get('jugger\core\ErrorHandler')->process($e);
             }
             else {
                 throw $e;

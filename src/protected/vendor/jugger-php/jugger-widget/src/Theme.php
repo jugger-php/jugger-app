@@ -3,6 +3,7 @@
 namespace jugger\widget;
 
 use Exception;
+use ReflectionClass;
 use jugger\assets\AssetsManager;
 use jugger\core\Action;
 use jugger\core\Renderer;
@@ -15,11 +16,12 @@ class Theme
     protected $request;
     protected $template;
     protected $basePath;
+    protected $params = [];
 
-    public function __construct(string $basePath = null)
+    public function __construct(string $basePath = null, AssetsManager $assetsManager = null)
     {
         $this->basePath = $basePath;
-        $this->assetsManager = new AssetsManager;
+        $this->assetsManager = $assetsManager;
     }
 
     public function setTemplate(string $template)
@@ -47,6 +49,16 @@ class Theme
         return $this->content;
     }
 
+    public function setParams(array $params)
+    {
+        $this->params = $params;
+    }
+
+    public function getParams(): array
+    {
+        return $this->params;
+    }
+
     public function setAssetsManager(AssetsManager $value)
     {
         $this->assetsManager = $value;
@@ -64,17 +76,17 @@ class Theme
         $renderer->setBasePath($this->basePath);
         
         if ($this->template) {
-            $view = "{$this->template}/view";
+            $view = "{$this->template}/template";
         }
         else {
-            $view = 'view';
+            $view = 'template';
         }
-        return $renderer->render($view);
+        return $renderer->render($view, $this->getParams());
     }
 
     public function widget(string $className, string $template, array $params): string
     {
-        $refClass = new \ReflectionClass($className);
+        $refClass = new ReflectionClass($className);
         if (!$refClass->isSubclassOf(Widget::class)) {
             throw new Exception("Arg '{$className}' must be extend ". Widget::class);
         }
@@ -83,8 +95,9 @@ class Theme
 
     public function updateActionResponse(Action $action)
     {
+        $content = $action->getResponse()->getData() ?: '';
         $this->setRequest($action->getRequest());
-        $this->setContent($action->getResponse()->getData());
+        $this->setContent($content);
         $action->getResponse()->setData($this->render());
     }
 }

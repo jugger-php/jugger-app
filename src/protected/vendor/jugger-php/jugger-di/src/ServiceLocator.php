@@ -55,7 +55,7 @@ class ServiceLocator
     protected function buildObject($config)
     {
         if (is_string($config)) {
-            return new $config();
+            return $this->createObject($config);
         }
         else if (is_callable($config)) {
             return call_user_func($config, $this);
@@ -65,30 +65,47 @@ class ServiceLocator
         }
     }
 
-    public function getFilledArgs(string $className): array
+    public function createObject(string $className, array $args = [])
     {
-        $ref = new ReflectionClass($className);
-        $refConstruct = $ref->getConstructor();
-
-        $args = [];
-        $refParams = $refConstruct->getParameters();
-        foreach ($refParams as $refParam) {
-            $value = null;
-            if ($refParam->isOptional()) {
-                $value = $refParam->getDefaultValue();
-            }
-            
-            $class = $refParam->getClass();
-            if ($class) {
-                $className = $class->getName();
-                if ($this->has($className)) {
-                    $value = $this->get($className);
-                }
-            }
-
-            $args[] = $value;
+        $refClass = new ReflectionClass($className);
+        $refConstructor = $refClass->getConstructor();
+        if (!$refConstructor) {
+            return $refClass->newInstance();
         }
-        return $args;
+
+        $refParams = $refConstructor->getParameters();
+        $refParamsLen = count($refParams);
+        if ($refParamsLen > 0) {
+            $args = array_slice($args, 0, $refParamsLen);
+        }
+
+        for ($i=0; $i < $refParamsLen; $i++) { 
+            if (!isset($args[$i])) {
+                $value = null;
+                $refParam = $refParams[$i];
+                if ($refParam->isOptional()) {
+                    $value = $refParam->getDefaultValue();
+                }
+
+                $classObj = $refParam->getClass();
+                if ($classObj) {
+                    $refClassName = $classObj->getName();
+                    if ($this->has($refClassName)) {
+                        $value = $this->get($refClassName);
+                    }
+                    else {
+                        $value = $this->createObject($refClassName);
+                    }
+                }
+
+                $args[$i] = $value;
+            }
+        }
+
+        if ($args) {
+            return $refClass->newInstanceArgs($args);
+        }
+        return $refClass->newInstance();
     }
     
     public function __get($id)
