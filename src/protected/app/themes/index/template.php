@@ -17,6 +17,7 @@ $title = $params['title'] ?? '';
     <title>
         <?= $title ?>
     </title>
+    <link rel="stylesheet" href="/assets/themes/index/style.css">
 </head>
 <body>
     <h1>
@@ -25,5 +26,6 @@ $title = $params['title'] ?? '';
     <p>
         <?= $context->getContent() ?>
     </p>
+    <script src="/assets/themes/index/script.js"></script>
 </body>
 </html>
